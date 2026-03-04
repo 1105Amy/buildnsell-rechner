@@ -344,6 +344,17 @@ input[type=range]::-moz-range-thumb{width:3px;height:20px;background:var(--yello
 <script>
 const GHL_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/HnZ7fqRJhjMDvip73Spa/webhook-trigger/4b825528-c82a-42a3-bf07-82a7b58fee0f';
 
+function getUTM() {
+  const p = new URLSearchParams(window.location.search);
+  return {
+    utmSource:   p.get('utm_source')   || '',
+    utmMedium:   p.get('utm_medium')   || '',
+    utmCampaign: p.get('utm_campaign') || '',
+    utmContent:  p.get('utm_content')  || '',
+    utmTerm:     p.get('utm_term')     || '',
+  };
+}
+  
 let aiData = null;
 let currentBranche = '';
 let calcResult = {};
@@ -579,6 +590,9 @@ async function submitLead(){
     aktiveKundenEnde:   calcResult.lastActive || 0,
     recurringEnde:      calcResult.lastMRR || 0,
     gesamtPotenzial:    calcResult.gesamt || 0,
+
+    // UTM Tracking
+    ...getUTM(),
   };
 
   try{

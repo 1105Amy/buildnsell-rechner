@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Bot Kosten-Rechner | BuildNSell</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:  #0a0c0f;
+  --card:   #111318;
+  --card2:  #1a1d24;
+  --line:   rgba(255,255,255,.1);
+  --red:    #e8194b;
+  --reddim: rgba(232,25,75,.25);
+  --redsoft:rgba(232,25,75,.09);
+  --steel:  #a0b4c8;
+  --yellow: #f5f000;
+  --white:  #ffffff;
+  --sub:    #d0d8e0;
+  --muted:  #a0b4c8;
+  --good:   #4ade80;
+  --gooddim:rgba(74,222,128,.18);
+  --r:      8px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:17px;}
+body{
+  background:var(--black);color:var(--white);
+  font-family:'Barlow',sans-serif;font-size:1rem;line-height:1.55;
+  min-height:100vh;overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 55% 35% at 0% 0%,rgba(232,25,75,.07) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 25% at 100% 100%,rgba(245,240,0,.03) 0%,transparent 50%);
+}
+
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:64px 24px 100px;}
+
+/* ── HEADER ── */
+header{text-align:center;margin-bottom:60px;}
+.eyebrow{
+  display:inline-block;border:1px solid var(--reddim);color:var(--red);
+  font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:.22em;text-transform:uppercase;padding:8px 20px;border-radius:100px;margin-bottom:22px;
+}
+h1{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(40px,8vw,74px);font-weight:900;line-height:1.0;
+  letter-spacing:-.01em;text-transform:uppercase;margin-bottom:16px;
+}
+h1 .red{color:var(--red);}
+.sub{font-size:18px;color:var(--sub);max-width:540px;margin:0 auto;line-height:1.6;}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:32px;margin-bottom:12px;}
+.card-head{display:flex;align-items:center;gap:14px;margin-bottom:26px;}
+.card-num{
+  width:36px;height:36px;border-radius:50%;background:var(--red);
+  color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+.card-sub{font-size:15px;color:var(--sub);margin-top:2px;}
+
+/* ── BRANCHE INPUT ── */
+.inp-wrap{display:flex;gap:0;}
+.inp-wrap input{
+  flex:1;background:var(--card2);border:2px solid var(--reddim);border-right:none;
+  border-radius:var(--r) 0 0 var(--r);outline:none;color:var(--white);
+  font-family:'Barlow',sans-serif;font-size:19px;font-weight:600;
+  padding:16px 20px;transition:border-color .2s;
+}
+.inp-wrap input:focus{border-color:var(--red);}
+.inp-wrap input::placeholder{color:var(--muted);}
+.inp-go{
+  background:var(--yellow);color:#000;border:none;
+  border-radius:0 var(--r) var(--r) 0;padding:0 24px;
+  font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;
+  cursor:pointer;transition:box-shadow .15s;white-space:nowrap;
+}
+.inp-go:hover{box-shadow:0 4px 20px rgba(245,240,0,.35);}
+
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px;}
+.tag{
+  background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:100px;
+  padding:7px 16px;font-size:15px;font-weight:500;color:var(--sub);
+  cursor:pointer;transition:all .15s;
+}
+.tag:hover,.tag.active{border-color:var(--reddim);color:var(--red);}
+
+/* ── SLIDERS ── */
+.sliders{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+@media(max-width:560px){.sliders{grid-template-columns:1fr;}}
+.sl-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10px;}
+.sl-lbl{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--sub);}
+.sl-val{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:var(--yellow);line-height:1;}
+.sl-val small{font-size:14px;color:var(--sub);font-weight:500;margin-left:3px;}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:2px;
+  background:rgba(245,240,0,.2);outline:none;cursor:pointer;border-radius:2px;margin-top:6px;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:3px;height:20px;background:var(--yellow);border-radius:2px;
+  box-shadow:0 0 8px rgba(245,240,0,.5);
+}
+input[type=range]::-moz-range-thumb{width:3px;height:20px;background:var(--yellow);border-radius:2px;border:none;}
+.sl-hint{font-size:15px;color:var(--muted);margin-top:6px;}
+
+/* ── REAKTIONSZEIT-PICKER ── */
+.react-pick{margin-top:24px;padding-top:22px;border-top:1px solid var(--line);}
+.react-lbl{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);margin-bottom:5px;}
+.react-sub{font-size:15px;color:var(--muted);margin-bottom:14px;}
+.react-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:480px){.react-btns{grid-template-columns:1fr;}}
+.react-btn{
+  background:var(--card2);border:2px solid var(--line);border-radius:var(--r);
+  padding:14px 12px;cursor:pointer;transition:all .15s;text-align:left;
+}
+.react-btn:hover{border-color:var(--reddim);}
+.react-btn.active{border-color:var(--red);background:var(--redsoft);}
+.rb-emoji{font-size:24px;display:block;margin-bottom:7px;}
+.rb-title{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--white);display:block;margin-bottom:4px;}
+.rb-desc{font-size:15px;color:var(--sub);line-height:1.4;display:block;}
+.rb-factor{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;margin-top:8px;display:block;}
+.rb-factor.gut{color:var(--good);}
+.rb-factor.mittel{color:var(--yellow);}
+.rb-factor.schlecht{color:var(--red);}
+
+/* ── LIVE CALC (immer sichtbar) ── */
+.live-calc{margin-top:28px;padding-top:24px;border-top:1px solid var(--line);}
+.live-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--steel);margin-bottom:16px;}
+.loss-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+@media(max-width:600px){.loss-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:420px){.loss-grid{grid-template-columns:1fr;}}
+.loss-item{background:var(--card2);border:1px solid var(--line);border-radius:var(--r);padding:16px 14px;text-align:center;}
+.loss-item.hot{border-color:var(--reddim);background:var(--redsoft);}
+.loss-icon{font-size:22px;margin-bottom:6px;}
+.loss-label{font-size:14px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-weight:600;margin-bottom:6px;}
+.loss-num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--red);line-height:1;}
+.loss-num.green{color:var(--good);}
+
+/* ── LOADING ── */
+.loading{display:none;text-align:center;padding:48px 0;}
+.spinner{
+  width:38px;height:38px;border:3px solid rgba(232,25,75,.15);
+  border-top-color:var(--red);border-radius:50%;
+  animation:spin .7s linear infinite;margin:0 auto 14px;
+}
+.loading p{font-size:15px;color:var(--sub);}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── RESULTS ── */
+.results{display:none;}
+.sec-lbl{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--steel);margin-bottom:14px;}
+.branche-badge{display:inline-flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--line);border-radius:100px;padding:10px 20px;margin-bottom:22px;}
+.branche-badge .b-icon{font-size:22px;}
+.branche-badge .b-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;}
+
+/* Verlust vs. Gewinn */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+@media(max-width:560px){.compare-grid{grid-template-columns:1fr;}}
+.compare-col{border-radius:var(--r);padding:22px 20px;}
+.compare-col.lose{background:var(--redsoft);border:1px solid var(--reddim);}
+.compare-col.gain{background:var(--gooddim);border:1px solid rgba(74,222,128,.3);}
+.compare-head{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;}
+.compare-head.red{color:var(--red);}
+.compare-head.green{color:var(--good);}
+.compare-rows{display:flex;flex-direction:column;gap:9px;}
+.cr{display:flex;justify-content:space-between;align-items:center;font-size:15px;}
+.cr-note{font-size:12px;color:#666;padding:2px 0 8px 0;line-height:1.5;}
+.cr-lbl{color:var(--sub);}
+.cr-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;}
+.cr-val.red{color:var(--red);}
+.cr-val.green{color:var(--good);}
+
+/* Big number */
+.big-result{border:1px solid var(--reddim);border-radius:var(--r);padding:22px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:14px;}
+.big-left{font-size:15px;color:var(--sub);line-height:1.65;}
+.big-left strong{color:var(--white);}
+.big-num{font-family:'Barlow Condensed',sans-serif;font-size:58px;font-weight:900;color:var(--yellow);line-height:1;}
+
+.big-result.green-box{border-color:rgba(74,222,128,.3);}
+.big-result.green-box .big-num{color:var(--good);}
+
+/* Bewertungs-Erklärung – volle Breite, kein flex */
+.bewertungs-block{background:var(--card2);border:1px solid rgba(245,240,0,.2);border-radius:var(--r);padding:20px 22px;margin-bottom:14px;}
+.bew-title{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;color:var(--yellow);}
+.bew-text{font-size:15px;color:var(--sub);line-height:1.65;}
+.bew-text strong{color:var(--white);}
+
+/* Rechenweg */
+.rechnung{border-radius:var(--r);overflow:hidden;margin-bottom:14px;border:1px solid var(--line);}
+.rech-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;padding:18px 22px;gap:14px;}
+.rech-row.verlust{background:var(--redsoft);border-bottom:1px solid var(--reddim);}
+.rech-row.einsparung{background:var(--gooddim);border-bottom:1px solid rgba(74,222,128,.2);}
+.rech-row.neukunden{background:rgba(74,222,128,.08);border-bottom:1px solid rgba(74,222,128,.15);}
+.rech-row.gesamt{background:rgba(245,240,0,.07);border-top:2px solid var(--yellow);}
+.rech-op{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;width:28px;text-align:center;line-height:1;}
+.rech-op.minus{color:var(--red);}
+.rech-op.plus{color:var(--good);}
+.rech-op.eq{color:var(--yellow);}
+.rech-body{min-width:0;}
+.rech-lbl{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px;}
+.rech-lbl.red{color:var(--red);}
+.rech-lbl.green{color:var(--good);}
+.rech-lbl.yellow{color:var(--yellow);}
+.rech-desc{font-size:13px;color:var(--muted);line-height:1.4;}
+.rech-num{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;line-height:1;text-align:right;white-space:nowrap;}
+.rech-num.red{color:var(--red);}
+.rech-num.green{color:var(--good);}
+.rech-num.yellow{color:var(--yellow);font-size:46px;}
+
+@media(max-width:500px){
+  .rech-row{grid-template-columns:auto 1fr;grid-template-rows:auto auto;padding:16px 16px;}
+  .rech-num{grid-column:1/-1;font-size:38px;text-align:left;padding-top:10px;border-top:1px solid rgba(255,255,255,.07);margin-top:6px;}
+  .rech-num.yellow{font-size:48px;}
+}
+.rech-hinweis{font-size:13px;color:var(--muted);padding:11px 18px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-top:none;border-radius:0 0 var(--r) var(--r);margin-bottom:14px;line-height:1.55;}
+
+.bot-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:18px;overflow:hidden;}
+@media(max-width:560px){.bot-grid{grid-template-columns:1fr;}}
+.bot-card{background:var(--card2);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 16px;min-width:0;overflow:hidden;}
+.bot-card.top{border-color:var(--reddim);background:var(--redsoft);}
+.bot-top-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.bot-icon{font-size:26px;flex-shrink:0;line-height:1.2;}
+.bot-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:.03em;flex:1;min-width:0;word-break:break-word;}
+.bot-badge{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:100px;white-space:nowrap;flex-shrink:0;}
+.bot-badge.top{background:var(--red);color:#fff;}
+.bot-badge.mid{background:var(--yellow);color:#000;}
+.bot-badge.solid{background:var(--steel);color:#000;}
+.bot-desc{font-size:14px;color:var(--sub);line-height:1.5;margin-bottom:10px;margin-top:8px;}
+.bot-saving{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--good);}
+
+/* Bot-Auswahl im Lead */
+.bot-select-wrap{max-width:480px;margin:0 auto 18px;text-align:left;}
+.bot-select-lbl{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);margin-bottom:10px;display:block;}
+.bot-check-all{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--card2);border:2px solid var(--reddim);border-radius:var(--r);margin-bottom:10px;cursor:pointer;transition:all .15s;}
+.bot-check-all:hover{background:var(--redsoft);}
+.bot-check-all.checked{background:var(--redsoft);}
+.bot-check-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card2);border:1px solid var(--line);border-radius:var(--r);margin-bottom:6px;cursor:pointer;transition:border-color .15s,background .15s;}
+.bot-check-item:hover{border-color:var(--reddim);}
+.bot-check-item.checked{border-color:var(--red);background:var(--redsoft);}
+.bci-box{width:18px;height:18px;border:2px solid var(--steel);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;transition:all .15s;}
+.bci-box.on{background:var(--red);border-color:var(--red);}
+.bci-icon{font-size:18px;flex-shrink:0;}
+.bci-name{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;flex:1;color:var(--white);}
+
+/* Insight */
+.insight{border-left:3px solid var(--steel);padding:13px 18px;font-size:15px;color:var(--sub);line-height:1.6;margin-bottom:14px;}
+.insight strong{color:var(--white);}
+
+.reset-btn{
+  background:transparent;border:1px solid var(--line);color:var(--muted);
+  font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;
+  padding:10px 20px;border-radius:var(--r);cursor:pointer;margin-top:16px;
+  transition:border-color .2s,color .2s;
+}
+.reset-btn:hover{border-color:var(--red);color:var(--red);}
+
+/* ── LEAD ── */
+.lead-card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:48px 36px;text-align:center;margin-top:12px;position:relative;overflow:hidden;
+  display:none;
+}
+.lead-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--red);}
+.lead-eyebrow{
+  display:inline-block;border:1px solid var(--reddim);color:var(--red);
+  font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;
+  letter-spacing:.2em;text-transform:uppercase;padding:7px 18px;border-radius:100px;margin-bottom:18px;
+}
+.lead-card h2{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(26px,4vw,40px);font-weight:900;text-transform:uppercase;
+  letter-spacing:.02em;line-height:1.05;margin-bottom:12px;
+}
+.lead-card p.lp{font-size:16px;color:var(--sub);max-width:440px;margin:0 auto 24px;line-height:1.65;}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:28px;}
+.chip{border:1px solid rgba(160,180,200,.4);border-radius:100px;padding:7px 16px;font-size:15px;font-weight:600;color:var(--sub);}
+.lead-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:480px;margin:0 auto 14px;text-align:left;}
+@media(max-width:500px){.lead-fields{grid-template-columns:1fr;}}
+.lf label{display:block;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);margin-bottom:7px;}
+.lf input{
+  width:100%;background:var(--card2);border:1px solid var(--line);border-radius:var(--r);
+  outline:none;color:var(--white);font-family:'Barlow',sans-serif;font-size:16px;font-weight:500;
+  padding:13px 15px;transition:border-color .2s;
+}
+.lf input:focus{border-color:var(--red);}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--yellow);color:#000;
+  font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;
+  letter-spacing:.06em;text-transform:uppercase;
+  padding:17px 40px;border:none;border-radius:var(--r);cursor:pointer;
+  width:100%;max-width:480px;transition:transform .15s,box-shadow .15s;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(245,240,0,.25);}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;}
+.note{font-size:14px;color:var(--sub);margin-top:12px;}
+.err{display:none;color:#f87171;font-size:14px;margin-bottom:10px;}
+#success{display:none;padding:16px 0;}
+.success-icon{font-size:48px;margin-bottom:14px;}
+.success-title{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:800;text-transform:uppercase;margin-bottom:8px;}
+.success-sub{font-size:15px;color:var(--sub);}
+
+.disc{margin-top:36px;font-size:13px;color:var(--muted);text-align:center;line-height:1.8;}
+
+/* ── Ticker animation ── */
+.loss-num{transition:all .25s ease;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">🔥 Kostenloser Bot-Verlust-Rechner</div>
+    <h1>Dein Betrieb läuft.<br>Aber was kostet <span class="red">„wir machen das manuell"</span> wirklich?</h1>
+    <p class="sub">Läuft doch. Aber läuft es wirklich? Gib deine Branche ein und sieh, was manuelle Abläufe jeden Monat still kosten.</p>
+  </header>
+
+  <!-- STEP 1: Branche -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-num">1</div>
+      <div>
+        <div class="card-title">Deine Branche</div>
+        <div class="card-sub">Freitext oder direkt klicken</div>
+      </div>
+    </div>
+    <div class="inp-wrap">
+      <input type="text" id="branche-input" placeholder="z. B. Fitnessstudio, Kosmetikstudio, Zahnarztpraxis …" maxlength="80" onkeydown="if(event.key==='Enter')analyze()">
+      <button class="inp-go" onclick="analyze()">→</button>
+    </div>
+    <div class="tags" id="tag-list">
+      <span class="tag" onclick="setTag(this,'Beautystudio')">💅 Beautystudio</span>
+      <span class="tag" onclick="setTag(this,'Online-Coach')">🎯 Online-Coach</span>
+      <span class="tag" onclick="setTag(this,'Zahnarztpraxis')">🦷 Zahnarztpraxis</span>
+      <span class="tag" onclick="setTag(this,'Fitnessstudio')">💪 Fitnessstudio</span>
+      <span class="tag" onclick="setTag(this,'Immobilienmakler')">🏠 Immobilienmakler</span>
+      <span class="tag" onclick="setTag(this,'Restaurant')">🍽️ Restaurant</span>
+      <span class="tag" onclick="setTag(this,'Fahrschule')">🚗 Fahrschule</span>
+      <span class="tag" onclick="setTag(this,'Steuerberater')">📊 Steuerberater</span>
+    </div>
+  </div>
+
+  <!-- STEP 2: Schieberegler -->
+  <div class="card">
+    <div class="card-head">
+      <div class="card-num">2</div>
+      <div>
+        <div class="card-title">Deine Kennzahlen</div>
+        <div class="card-sub">Je genauer, desto ehrlicher das Ergebnis</div>
+      </div>
+    </div>
+    <div class="sliders">
+
+      <div>
+        <div class="sl-top">
+          <span class="sl-lbl">Stundenlohn Mitarbeiter</span>
+          <span class="sl-val" id="sv-stundenlohn">18 <small>€/Std</small></span>
+        </div>
+        <input type="range" id="sl-stundenlohn" min="12" max="200" step="1" value="18" oninput="updateCalc()">
+        <div class="sl-hint">Bruttolohn inkl. Nebenkosten ca. ×1,3</div>
+      </div>
+
+      <div>
+        <div class="sl-top">
+          <span class="sl-lbl">Ø Kundenumsatz</span>
+          <span class="sl-val" id="sv-umsatz">120 <small>€/Kunde</small></span>
+        </div>
+        <input type="range" id="sl-umsatz" min="20" max="2000" step="10" value="120" oninput="updateCalc()">
+        <div class="sl-hint">Was ein Kunde durchschnittlich ausgibt</div>
+      </div>
+
+      <div>
+        <div class="sl-top">
+          <span class="sl-lbl">Kontakte & Anfragen pro Tag</span>
+          <span class="sl-val" id="sv-anfragen">12 <small>/Tag</small></span>
+        </div>
+        <input type="range" id="sl-anfragen" min="2" max="100" step="1" value="12" oninput="updateCalc()">
+        <div class="sl-hint">Telefon, WhatsApp, E-Mail, Rückfragen, Web – alles zusammen</div>
+      </div>
+
+      <div>
+        <div class="sl-top">
+          <span class="sl-lbl">Terminbuchungen täglich</span>
+          <span class="sl-val" id="sv-buchrate">5 <small>/Tag</small></span>
+        </div>
+        <input type="range" id="sl-buchrate" min="1" max="80" step="1" value="5" oninput="updateCalc()">
+        <div class="sl-hint">Wie viele Termine buchst du aktuell pro Tag?</div>
+      </div>
+
+      <div>
+        <div class="sl-top">
+          <span class="sl-lbl">Ø Bearbeitungszeit pro Kontakt</span>
+          <span class="sl-val" id="sv-bearbzeit">4 <small>Min</small></span>
+        </div>
+        <input type="range" id="sl-bearbzeit" min="1" max="30" step="1" value="4" oninput="updateCalc()">
+        <div class="sl-hint">Anruf entgegennehmen, E-Mail beantworten, Termin eintragen – alles zusammen</div>
+      </div>
+
+      <div>
+        <div class="sl-top">
+          <span class="sl-lbl">No-Show-Rate</span>
+          <span class="sl-val" id="sv-noshow">20 <small>%</small></span>
+        </div>
+        <input type="range" id="sl-noshow" min="2" max="50" step="1" value="20" oninput="updateCalc()">
+        <div class="sl-hint">Kunden, die einfach nicht erscheinen</div>
+      </div>
+
+      <div>
+        <div class="sl-top">
+          <span class="sl-lbl">Bewertungsrate</span>
+          <span class="sl-val" id="sv-bewertung">8 <small>%</small></span>
+        </div>
+        <input type="range" id="sl-bewertung" min="1" max="40" step="1" value="8" oninput="updateCalc()">
+        <div class="sl-hint">Kunden, die von selbst eine Bewertung hinterlassen</div>
+      </div>
+
+    </div>
+
+    <!-- Reaktionszeit-Picker -->
+    <div class="react-pick">
+      <div class="react-lbl">Wie schnell bearbeitest du Anfragen?</div>
+      <div class="react-sub">Das bestimmt, wie viele Interessenten du verlierst, bevor du antwortest.</div>
+      <div class="react-btns">
+        <div class="react-btn" id="rb-sofort" onclick="setReaktion('sofort')">
+          <span class="rb-emoji">⚡</span>
+          <span class="rb-title">Sofort</span>
+          <span class="rb-desc">Jemand ist immer erreichbar, wir rufen direkt zurück</span>
+          <span class="rb-factor gut">→ Verlustfaktor: niedrig</span>
+        </div>
+        <div class="react-btn active" id="rb-heute" onclick="setReaktion('heute')">
+          <span class="rb-emoji">🕐</span>
+          <span class="rb-title">Gleicher Tag</span>
+          <span class="rb-desc">Anfragen werden abends oder zwischen Terminen bearbeitet</span>
+          <span class="rb-factor mittel">→ Verlustfaktor: mittel</span>
+        </div>
+        <div class="react-btn" id="rb-spaeter" onclick="setReaktion('spaeter')">
+          <span class="rb-emoji">📬</span>
+          <span class="rb-title">Nächster Tag</span>
+          <span class="rb-desc">Wir schaffen es meist erst am nächsten Morgen</span>
+          <span class="rb-factor schlecht">→ Verlustfaktor: hoch</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live-Verluste immer sichtbar -->
+    <div class="live-calc">
+      <div class="live-title">📉 Was du jeden Monat verlierst – gerade jetzt:</div>
+      <div class="loss-grid">
+        <div class="loss-item hot">
+          <div class="loss-icon">💸</div>
+          <div class="loss-label">Entgangener Umsatz</div>
+          <div class="loss-num" id="lv-umsatz">–</div>
+        </div>
+        <div class="loss-item">
+          <div class="loss-icon">⏱️</div>
+          <div class="loss-label">Mitarbeiterstunden</div>
+          <div class="loss-num" id="lv-stunden">–</div>
+        </div>
+        <div class="loss-item">
+          <div class="loss-icon">🚪</div>
+          <div class="loss-label">Verlorene Anfragen</div>
+          <div class="loss-num" id="lv-kunden">–</div>
+        </div>
+        <div class="loss-item">
+          <div class="loss-icon">❌</div>
+          <div class="loss-label">No-Shows / Monat</div>
+          <div class="loss-num" id="lv-noshows">–</div>
+        </div>
+        <div class="loss-item">
+          <div class="loss-icon">⭐</div>
+          <div class="loss-label">Fehlende Bewertungen</div>
+          <div class="loss-num" id="lv-bewertungen">–</div>
+        </div>
+        <div class="loss-item hot">
+          <div class="loss-icon">🔥</div>
+          <div class="loss-label">Kosten manuelle Bearbeitung</div>
+          <div class="loss-num" id="lv-kosten">–</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p id="loading-text">Analysiere Branche …</p>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results card" id="results">
+    <div class="branche-badge" id="branche-badge"></div>
+
+    <div class="sec-lbl">Was du verlierst – was ein Bot rettet</div>
+    <div class="compare-grid">
+      <div class="compare-col lose">
+        <div class="compare-head red">❌ Ohne Bot – jeden Monat</div>
+        <div class="compare-rows" id="lose-rows"></div>
+      </div>
+      <div class="compare-col gain">
+        <div class="compare-head green">✅ Mit Bot – jeden Monat</div>
+        <div class="compare-rows" id="gain-rows"></div>
+      </div>
+    </div>
+
+    <div class="rechnung" id="rechnung">
+      <div class="rech-row verlust">
+        <div class="rech-op minus">−</div>
+        <div class="rech-body">
+          <div class="rech-lbl red">Was du verlierst</div>
+          <div class="rech-desc" id="r-verlust-desc">Anfragen, No-Shows & Bearbeitungszeit zusammen</div>
+        </div>
+        <div class="rech-num red" id="r-verlust-num">–</div>
+      </div>
+      <div class="rech-row einsparung">
+        <div class="rech-op plus">+</div>
+        <div class="rech-body">
+          <div class="rech-lbl green">Was der Bot sofort einspart</div>
+          <div class="rech-desc">Gerettete Anfragen, weniger No-Shows, weniger manuelle Arbeit</div>
+        </div>
+        <div class="rech-num green" id="r-einspar-num">–</div>
+      </div>
+      <div class="rech-row neukunden">
+        <div class="rech-op plus">+</div>
+        <div class="rech-body">
+          <div class="rech-lbl green">Mehr Neukunden durch Bewertungen</div>
+          <div class="rech-desc" id="r-bew-desc">Besseres Google-Ranking bringt neue Kunden, die dich sonst nie gefunden hätten</div>
+        </div>
+        <div class="rech-num green" id="r-bew-num">–</div>
+      </div>
+      <div class="rech-row gesamt">
+        <div class="rech-op eq">=</div>
+        <div class="rech-body">
+          <div class="rech-lbl yellow">Dein Gesamtpotenzial / Monat</div>
+          <div class="rech-desc">Einsparung + Mehrumsatz durch den Bot</div>
+        </div>
+        <div class="rech-num yellow" id="r-gesamt-num">–</div>
+      </div>
+    </div>
+    <div class="rech-hinweis">
+      ⓘ Das Gesamtpotenzial ist nicht die Summe der drei Zeilen: Der Verlust zeigt, was du gerade liegen lässt. Einsparung und Neukunden zeigen, was ein Bot davon zurückholt – sie ergänzen sich, ersetzen sich aber nicht gegenseitig.
+    </div>
+
+    <div class="bewertungs-block" id="bewertungs-block"></div>
+
+    <div class="sec-lbl" style="margin-top:24px;">Die 4 Bots, die dir am meisten bringen</div>
+    <div class="bot-grid" id="bot-grid"></div>
+
+    <div class="insight" id="insight-text"></div>
+
+    <button class="reset-btn" onclick="resetCalc()">↩ Andere Branche eingeben</button>
+  </div>
+
+  <!-- LEAD -->
+  <div class="lead-card" id="lead-card">
+    <div class="lead-eyebrow">Nächster Schritt</div>
+    <h2 id="lead-headline">Angebot für deine<br>AI Bots anfragen</h2>
+    <p class="lp" id="lead-subtext">Wähle die Bots, die dich interessieren – wir melden uns mit einem konkreten Angebot für deine Branche.</p>
+
+    <div id="lead-form">
+      <!-- Bot-Auswahl -->
+      <div class="bot-select-wrap">
+        <span class="bot-select-lbl">Welche Bots interessieren dich?</span>
+        <div class="bot-check-all" id="bca-all" onclick="toggleAll()">
+          <div class="bci-box" id="bca-all-box"></div>
+          <span class="bci-icon">🤖</span>
+          <span class="bci-name">Alle 4 Bots auswählen</span>
+        </div>
+        <div id="bot-checklist"></div>
+      </div>
+
+      <div class="lead-fields">
+        <div class="lf"><label>Vorname</label><input type="text" id="l-name" placeholder="Optional" autocomplete="given-name"></div>
+        <div class="lf"><label>E-Mail *</label><input type="email" id="l-email" placeholder="deine@email.de" autocomplete="email"></div>
+      </div>
+      <div class="err" id="lead-err">Bitte gib eine gültige E-Mail-Adresse ein.</div>
+      <button class="btn" id="lead-btn" onclick="submitLead()">Kostenloses Angebot anfordern →</button>
+      <p class="note" id="lead-note">Kein Spam. Nur dein Angebot – und gelegentlich nützliche Infos zu AI Bots.</p>
+    </div>
+    <div id="success">
+      <div class="success-icon">✅</div>
+      <div class="success-title" id="success-title">Anfrage ist raus!</div>
+      <p class="success-sub" id="success-sub">Wir melden uns in Kürze mit deinem persönlichen Angebot. Schau kurz in den Spam-Ordner.</p>
+    </div>
+  </div>
+
+  <div class="disc" id="footer-disc">
+    Berechnungen basieren auf realistischen DACH-Branchendaten. Individuelle Ergebnisse variieren.<br>
+    <strong>BuildNSell</strong> · henriettegladiator.de · Honest numbers only.
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   KONFIGURATION – hier alles anpassen, sonst nichts anfassen
+   ═══════════════════════════════════════════════════════════════════ */
+const CONFIG = {
+
+  /* ── Deine Marke ── */
+  firmenname:   'BuildNSell',           // Erscheint in Footer & Datenschutzhinweis
+  website:      'henriettegladiator.de',
+  footer_text:  'Berechnungen basieren auf realistischen DACH-Branchendaten. Individuelle Ergebnisse variieren.',
+
+  /* ── Lead-Erfassung ── */
+  // Option A: GHL Webhook (Standard)
+  webhook_url:  'https://services.leadconnectorhq.com/hooks/HnZ7fqRJhjMDvip73Spa/webhook-trigger/4b825528-c82a-42a3-bf07-82a7b58fee0f',
+
+  // Option B: Eigener Endpoint (trägt Daten selbst weiter, z. B. Zapier, Make, eigenes Backend)
+  // webhook_url: 'https://deine-domain.de/api/lead',
+
+  // Option C: Kein Webhook – nur E-Mail-Link (mailto fallback)
+  // webhook_url: null,
+  // mailto_fallback: 'anfragen@deine-domain.de',
+
+  /* ── Branchenanalyse-API ── */
+  // Option A: Netlify Function (Standard für BuildNSell-Kunden)
+  analyze_url:  '/.netlify/functions/analyze-endkunde',
+
+  // Option B: Eigene API (erwartet POST mit { branche, kennzahlen } und gibt { emoji, brancheNormiert, insight, bots } zurück)
+  // analyze_url: 'https://deine-domain.de/api/analyze',
+
+  // Option C: Kein API – reiner Fallback-Modus (keine externe Abhängigkeit)
+  // analyze_url: null,
+
+  /* ── Texte im Formular ── */
+  lead_headline:    'Angebot für deine<br>AI Bots anfragen',
+  lead_subtext:     'Wähle die Bots, die dich interessieren – wir melden uns mit einem konkreten Angebot für deine Branche.',
+  lead_cta:         'Kostenloses Angebot anfordern →',
+  lead_datenschutz: 'Kein Spam. Nur dein Angebot – und gelegentlich nützliche Infos zu AI Bots.',
+  success_title:    'Anfrage ist raus!',
+  success_text:     'Wir melden uns in Kürze mit deinem persönlichen Angebot. Schau kurz in den Spam-Ordner.',
+
+  /* ── Quell-Tag im Lead (für CRM-Segmentierung) ── */
+  lead_source: 'endkunden-rechner',
+};
+/* ═══════════════════════════════════════════════════════════════════
+   ENDE KONFIGURATION
+   ═══════════════════════════════════════════════════════════════════ */
+
+let aiData = null;
+let currentBranche = '';
+let calcState = {};
+let reaktionFaktor = 0.25;
+let botChecked = [false, false, false, false];
+
+// UTM-Parameter beim Laden einmalig auslesen und speichern
+const UTM = (() => {
+  const p = new URLSearchParams(window.location.search);
+  return {
+    utm_source:   p.get('utm_source')   || '',
+    utm_medium:   p.get('utm_medium')   || '',
+    utm_campaign: p.get('utm_campaign') || '',
+    utm_content:  p.get('utm_content')  || '',
+    utm_term:     p.get('utm_term')     || '',
+    referrer:     document.referrer     || ''
+  };
+})();
+
+function toggleBot(i){
+  botChecked[i] = !botChecked[i];
+  renderChecklist();
+}
+
+function toggleAll(){
+  const allOn = botChecked.every(v=>v);
+  botChecked = botChecked.map(()=>!allOn);
+  renderChecklist();
+}
+
+function renderChecklist(botsOverride){
+  const bots = botsOverride || (aiData ? aiData.bots : [
+    {icon:'📅', name:'Terminbuchungs-Bot'},
+    {icon:'⭐', name:'Review-Bot'},
+    {icon:'💬', name:'Fragen & Support-Bot'}
+  ]);
+  const allOn = botChecked.every(v=>v);
+  const allBox = document.getElementById('bca-all-box');
+  const allWrap = document.getElementById('bca-all');
+  if(allBox){ allBox.textContent = allOn ? '✓' : ''; allBox.className = 'bci-box' + (allOn?' on':''); }
+  if(allWrap){ allWrap.className = 'bot-check-all' + (allOn?' checked':''); }
+
+  const cl = document.getElementById('bot-checklist');
+  if(!cl) return;
+  cl.innerHTML = bots.slice(0,4).map((b,i)=>`
+    <div class="bot-check-item${botChecked[i]?' checked':''}" onclick="toggleBot(${i})">
+      <div class="bci-box${botChecked[i]?' on':''}">${botChecked[i]?'✓':''}</div>
+      <span class="bci-icon">${b.icon}</span>
+      <span class="bci-name">${b.name}</span>
+    </div>`).join('');
+}
+
+function setReaktion(val){
+  document.querySelectorAll('.react-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('rb-' + val).classList.add('active');
+  reaktionFaktor = val === 'sofort' ? 0.10 : val === 'heute' ? 0.25 : 0.45;
+  updateCalc();
+  // Insight-Text neu rendern wenn Ergebnisse bereits sichtbar
+  if(aiData && document.getElementById('results').style.display !== 'none'){
+    updateInsightText();
+  }
+}
+
+function updateInsightText(){
+  const reaktionPrefix = reaktionFaktor === 0.10
+    ? 'Trotz sofortiger Beantwortung –'
+    : reaktionFaktor === 0.25
+    ? 'Du antwortest <strong>noch am gleichen Tag</strong> –'
+    : 'Du antwortest <strong>erst am nächsten Morgen</strong> –';
+  const reaktionFolge = reaktionFaktor === 0.10
+    ? 'aber Anfragen nach Feierabend, am Wochenende und in Stoßzeiten gehen trotzdem verloren. Ein Bot schließt diese Lücke lautlos.'
+    : reaktionFaktor === 0.25
+    ? 'Interessenten, die morgens anfragen, haben bis mittags oft schon beim Mitbewerber gebucht. Wer abends schreibt, wartet bis zum nächsten Morgen. Ein Bot antwortet in Sekunden – zu jeder Uhrzeit.'
+    : 'fast jeder zweite Interessent ist bis dahin weg. Der Mitbewerber mit Bot hat in der Zeit bereits bestätigt, erinnert und gebucht.';
+  const brancheStat = currentBranche
+    ? `Studien zeigen: Bis zu 78 % der Kunden entscheiden sich für den Anbieter, der als Erstes antwortet. In der ${aiData.brancheNormiert || currentBranche}-Branche bedeutet das – wer wartet, verliert.`
+    : `Bis zu 78 % der Kunden entscheiden sich für den Anbieter, der als Erstes antwortet. Wer wartet, verliert.`;
+  document.getElementById('insight-text').innerHTML =
+    `💬 ${reaktionPrefix} ${reaktionFolge}<br><br>${brancheStat}${aiData.insight ? '<br><br>' + aiData.insight : ''}`;
+}
+
+function gv(id){ return parseFloat(document.getElementById(id).value)||0; }
+function fmtE(n){ return Math.round(n).toLocaleString('de-DE') + ' €'; }
+function fmtN(n){ return Math.round(n).toLocaleString('de-DE'); }
+function fmtH(n){ return Math.round(n).toLocaleString('de-DE') + ' Std'; }
+
+function setTag(el, val){
+  document.querySelectorAll('.tag').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('branche-input').value = val;
+  analyze();
+}
+
+/* ── BERECHNUNG ── */
+// Konservative Conversion-Annahmen (unsichtbar im UI)
+const CONV_ANFRAGEN = 0.30; // 30% der Anfragen werden zu Kunden
+const CONV_TERMINE  = 0.80; // 80% der Buchungen werden zu Kunden (Termin = starkes Signal)
+
+function calcNumbers(){
+  const stundenlohn  = gv('sl-stundenlohn') * 1.3; // inkl. Nebenkosten
+  const umsatz       = gv('sl-umsatz');
+  const anfragenTag  = gv('sl-anfragen');
+  const buchungenTag = gv('sl-buchrate');
+  const noshowRate   = gv('sl-noshow') / 100;
+  const bewertRate   = gv('sl-bewertung') / 100;
+
+  const anfragenMon  = anfragenTag * 22;
+  const termine      = buchungenTag * 22;
+  const noshows      = termine * noshowRate;
+
+  // Potenzielle Kunden aus beiden Kanälen
+  const potKundenAnfragen = anfragenMon * CONV_ANFRAGEN;
+  const potKundenTermine  = termine * CONV_TERMINE;
+
+  // Verlorene Anfragen & daraus verlorene potenzielle Kunden
+  const verloreneAnfragen     = anfragenMon * reaktionFaktor;
+  const verloreneKunden       = verloreneAnfragen * CONV_ANFRAGEN;
+  const verlorenerUmsatz      = verloreneKunden * umsatz;
+
+  // Bearbeitungsaufwand: Slider-Wert Minuten pro Kontakt
+  // Terminbuchungen kosten manuell 1.8× mehr (Kalender, Bestätigung, Erinnerung)
+  const bearbeitungMinPro = gv('sl-bearbzeit') || 4;
+  const bearbeitungsMin   = (anfragenMon * bearbeitungMinPro) + (termine * bearbeitungMinPro * 1.8);
+  const bearbeitungsStd   = bearbeitungsMin / 60;
+  const bearbeitungsKost  = bearbeitungsStd * stundenlohn;
+
+  // No-Show Schaden – basiert auf Terminen × Conversion (echte Kunden)
+  const noshowKosten = noshows * CONV_TERMINE * umsatz * 0.6;
+
+  // Bewertungen: Potenzial basiert auf potentiellen Kunden aus Terminen
+  const aktBewertungen      = Math.round(potKundenTermine * bewertRate);
+  const moeglichBewertungen = Math.round(potKundenTermine * 0.40);
+  const fehlendeBewertungen = Math.max(moeglichBewertungen - aktBewertungen, 0);
+
+  const neukundenDurchBewertungen = Math.round(fehlendeBewertungen / 10);
+  const bewertungsUmsatz          = neukundenDurchBewertungen * umsatz;
+
+  // BOT-Einsparungen & Gewinne
+  const botAnfrageEinsparung = bearbeitungsKost * 0.75;
+  const botNoshowEinsparung  = noshowKosten * 0.65;
+  const botUmsatzGewinn      = verlorenerUmsatz * 0.80;
+  const botBewertungsUmsatz  = bewertungsUmsatz;
+
+  const totalVerlust   = verlorenerUmsatz + bearbeitungsKost + noshowKosten;
+  const verlustDurchReaktion = verlorenerUmsatz;
+  const totalBotGewinn = botAnfrageEinsparung + botNoshowEinsparung + botUmsatzGewinn;
+  const gesamtChance   = totalBotGewinn + botBewertungsUmsatz;
+
+  return {
+    anfragenMon, termine, noshows,
+    potKundenAnfragen, potKundenTermine,
+    verloreneAnfragen, verloreneKunden, verlorenerUmsatz,
+    bearbeitungsStd, bearbeitungsKost,
+    noshowKosten,
+    aktBewertungen, fehlendeBewertungen,
+    neukundenDurchBewertungen, bewertungsUmsatz,
+    botAnfrageEinsparung, botNoshowEinsparung, botUmsatzGewinn, botBewertungsUmsatz,
+    totalVerlust, verlustDurchReaktion, totalBotGewinn, gesamtChance
+  };
+}
+
+function updateCalc(){
+  // Slider-Werte anzeigen
+  document.getElementById('sv-stundenlohn').innerHTML = gv('sl-stundenlohn') + ' <small>€/Std</small>';
+  document.getElementById('sv-umsatz').innerHTML      = gv('sl-umsatz').toLocaleString('de-DE') + ' <small>€/Kunde</small>';
+  document.getElementById('sv-anfragen').innerHTML    = gv('sl-anfragen') + ' <small>/Tag</small>';
+  document.getElementById('sv-buchrate').innerHTML    = gv('sl-buchrate') + ' <small>/Tag</small>';
+  document.getElementById('sv-noshow').innerHTML      = gv('sl-noshow') + ' <small>%</small>';
+  document.getElementById('sv-bearbzeit').innerHTML   = gv('sl-bearbzeit') + ' <small>Min</small>';
+  document.getElementById('sv-bewertung').innerHTML   = gv('sl-bewertung') + ' <small>%</small>';
+
+  const c = calcNumbers();
+  calcState = c;
+
+  // Live-Verluste
+  document.getElementById('lv-umsatz').textContent      = fmtE(c.verlorenerUmsatz) + '/Mon';
+  document.getElementById('lv-stunden').textContent     = fmtH(c.bearbeitungsStd) + '/Mon';
+  document.getElementById('lv-kunden').textContent      = fmtN(Math.round(c.verloreneAnfragen)) + '/Mon';
+  document.getElementById('lv-noshows').textContent     = fmtN(Math.round(c.noshows)) + '/Mon';
+  document.getElementById('lv-bewertungen').textContent = fmtN(c.fehlendeBewertungen) + '/Mon';
+  document.getElementById('lv-kosten').textContent      = fmtE(c.bearbeitungsKost) + '/Mon';
+
+  // Results update wenn sichtbar
+  if(document.getElementById('results').style.display !== 'none'){
+    renderNumbers(c);
+  }
+}
+
+/* ── ANALYSE (AI) ── */
+async function analyze(){
+  const input = document.getElementById('branche-input').value.trim();
+  if(!input){ document.getElementById('branche-input').focus(); return; }
+  currentBranche = input;
+
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('lead-card').style.display = 'none';
+
+  const msgs = ['Analysiere Branche …','Ermittle Bot-Potenziale …','Berechne Verluste …','Bereite Auswertung vor …'];
+  let mi = 0;
+  const ticker = setInterval(()=>{
+    document.getElementById('loading-text').textContent = msgs[mi=(mi+1)%msgs.length];
+  },1600);
+
+  // Zahlen vorab berechnen – für API und Fallback
+  const c = calcNumbers();
+  calcState = c;
+
+  try{
+    if(!CONFIG.analyze_url) throw new Error('Kein API-Endpunkt konfiguriert – Fallback aktiv');
+    const res = await fetch(CONFIG.analyze_url, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        branche: input,
+        kennzahlen: {
+          verloreneAnfragen: Math.round(c.verloreneAnfragen),
+          verlorenerUmsatz:  Math.round(c.verlorenerUmsatz),
+          noshows:           Math.round(c.noshows),
+          bearbeitungsStd:   Math.round(c.bearbeitungsStd),
+          reaktionFaktor,
+          totalVerlust:      Math.round(c.totalVerlust)
+        }
+      })
+    });
+    if(!res.ok) throw new Error('Function error');
+    aiData = await res.json();
+    if(aiData.error) throw new Error(aiData.error);
+
+    // Vorqualifizierungs-Bot nachträglich ergänzen falls API ihn nicht kennt
+    if(brancheHatVorqual(input) && !aiData.bots.some(b => b.name && b.name.toLowerCase().includes('vorqualifizier'))){
+      aiData.bots.push({
+        icon:'🎯', name:'Vorqualifizierungs-Bot', top:true,
+        desc:`Interessenten beantworten vor dem Erstgespräch automatisch ein paar gezielte Fragen – du sprichst nur noch mit echten Interessenten.`,
+        einsparung:'Nur noch qualifizierte Termine'
+      });
+    }
+  } catch(e){
+    aiData = getFallbackData(input);
+  }
+
+  clearInterval(ticker);
+  document.getElementById('loading').style.display = 'none';
+  renderResults();
+}
+
+// Branchen die einen Vorqualifizierungs-Bot brauchen (Beratung, Erstgespräch, Angebotsphase)
+const VORQUAL_BRANCHEN = [
+  'coach','coaching','berater','beratung','consultant','consulting',
+  'handwerker','handwerk','elektriker','sanitär','maler','fliesenleger','zimmermann','dachdecker',
+  'schreinerei','schlosserei','heizung','klima','gartenbau','landschaftsbau',
+  'rechtsanwalt','anwalt','notar','steuerberater','wirtschaftsprüfer',
+  'arzt','zahnarzt','physiotherapeut','ergotherapeut','psychologe','therapeut',
+  'architekt','innenarchitekt','planungsbüro',
+  'fahrschule','musikschule','nachhilfeinstitut','sprachschule',
+  'versicherung','finanzberater','immobilienmakler','makler'
+];
+
+// Branchen bei denen Vorqualifizierung NICHT passt
+const KEIN_VORQUAL = [
+  'beautystudio','kosmetik','nagelstudio','friseursalon','friseur',
+  'restaurant','café','cafe','bistro','bäckerei','konditorei',
+  'einzelhandel','shop','boutique','laden','supermarkt',
+  'fitnessstudio','yoga','pilates','tanzschule'
+];
+
+function brancheHatVorqual(branche){
+  const b = branche.toLowerCase();
+  if(KEIN_VORQUAL.some(k => b.includes(k))) return false;
+  return VORQUAL_BRANCHEN.some(v => b.includes(v));
+}
+
+function getFallbackData(branche){
+  const c = calcState && calcState.totalVerlust ? calcState : calcNumbers();
+  const hatVorqual = brancheHatVorqual(branche);
+
+  // Zahlenbasierter Insight – nicht mehr generisch
+  const verlorenRound = Math.round(c.verloreneAnfragen);
+  const umsatzRound   = Math.round(c.verlorenerUmsatz);
+  const reaktionText  = reaktionFaktor === 0.10
+    ? 'Auch mit sofortiger Reaktion'
+    : reaktionFaktor === 0.25
+    ? 'Auch bei Antwort noch am gleichen Tag'
+    : 'Bei Antwort erst am nächsten Morgen';
+
+  const reaktionZusatz = reaktionFaktor === 0.25
+    ? ' Interessenten, die morgens schreiben, haben bis mittags oft schon woanders gebucht.'
+    : reaktionFaktor === 0.45
+    ? ' Fast jeder zweite Interessent entscheidet sich bis dahin für einen anderen Anbieter.'
+    : '';
+
+  const verlustProzent = reaktionFaktor === 0.10 ? '10' : reaktionFaktor === 0.25 ? '25' : '45';
+  const insight = `Auch bei Antwort noch am gleichen Tag gehen in der ${branche}-Branche rund <strong>${verlustProzent} % der Anfragen</strong> verloren – die kommen über Kanäle die niemand im Team im Blick hat.${reaktionZusatz} Die meisten davon kommen nie zurück, weil der Mitbewerber schneller war.`;
+
+  const bots = [
+    { icon:'📅', name:'Terminbuchungs-Bot',   prio:1, desc:'Kunden buchen Termine rund um die Uhr – ohne Telefon, ohne Wartezeit.', einsparung:'Bis zu 3 Std. täglich gespart' },
+    { icon:'⭐', name:'Review-Bot',            prio:2, desc:'Nach dem Termin: Automatische Bitte um eine Bewertung – zum richtigen Zeitpunkt.', einsparung:'3–5× mehr Google-Bewertungen' },
+    { icon:'💬', name:'Fragen & Support-Bot', prio:2, desc:'Häufige Fragen, Preise, Öffnungszeiten, erste Beratungsanfragen – der Bot antwortet sofort, auch nachts und am Wochenende.', einsparung:'Bis zu 60 % weniger Rückfragen' }
+  ];
+
+  if(hatVorqual){
+    bots.push({
+      icon:'🎯', name:'Vorqualifizierungs-Bot', top:true,
+      desc:`Interessenten beantworten vor dem Erstgespräch automatisch ein paar gezielte Fragen – du sprichst nur noch mit echten Interessenten, keine Zeit mehr für unqualifizierte Anfragen.`,
+      einsparung:'Nur noch qualifizierte Termine'
+    });
+  }
+
+  return {
+    emoji: '🏢',
+    brancheNormiert: branche,
+    insight,
+    bots
+  };
+}
+
+/* ── RENDER ── */
+function renderResults(){
+  if(!aiData) return;
+  const c = calcNumbers();
+  calcState = c;
+
+  // Badge
+  document.getElementById('branche-badge').innerHTML = `
+    <span class="b-icon">${aiData.emoji}</span>
+    <span class="b-name">${aiData.brancheNormiert}</span>`;
+
+  renderNumbers(c);
+  renderBots(aiData.bots, c);
+  updateInsightText();
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('lead-card').style.display = 'block';
+}
+
+function renderNumbers(c){
+  const reaktionLabel = reaktionFaktor === 0.10 ? '(trotz sofortiger Reaktion)' : reaktionFaktor === 0.25 ? '(durch verzögerte Reaktion)' : '(durch langsame Reaktion)';
+  const verloreneErklaerung = reaktionFaktor === 0.10
+    ? 'Kein Team ist 24/7 erreichbar – Abende, Wochenenden und Stoßzeiten hinterlassen Lücken.'
+    : reaktionFaktor === 0.25
+    ? 'Interessenten die morgens anfragen, sind mittags oft schon woanders. Zeit ist der Entscheidungsfaktor.'
+    : 'Fast jeder zweite Interessent entscheidet sich bis zum nächsten Morgen für einen anderen Anbieter.';
+  const bearbMinPro = gv('sl-bearbzeit') || 4;
+
+  document.getElementById('lose-rows').innerHTML = `
+    <div class="cr"><span class="cr-lbl">Verlorene Anfragen/Mon</span><span class="cr-val red">${fmtN(Math.round(c.verloreneAnfragen))}</span></div>
+    <div class="cr-note">${verloreneErklaerung}</div>
+    <div class="cr"><span class="cr-lbl">Entgangener Umsatz ${reaktionLabel}</span><span class="cr-val red">${fmtE(c.verlorenerUmsatz)}</span></div>
+    <div class="cr"><span class="cr-lbl">Bearbeitungsaufwand (${bearbMinPro} Min/Kontakt)</span><span class="cr-val red">${fmtE(c.bearbeitungsKost)}</span></div>
+    <div class="cr-note">Anruf, E-Mail, Termineintrag – ${fmtH(c.bearbeitungsStd)} Teamzeit pro Monat, die ein Bot übernehmen kann.</div>
+    <div class="cr"><span class="cr-lbl">No-Show-Schaden</span><span class="cr-val red">${fmtE(c.noshowKosten)}</span></div>
+    <div class="cr"><span class="cr-lbl">Fehlende Bewertungen</span><span class="cr-val red">${fmtN(c.fehlendeBewertungen)}/Mon</span></div>
+    <div class="cr-note">Basiert auf deinen gebuchten Terminen – nicht jeder Kontakt wird Kunde.</div>`;
+
+  // Gewinn-Spalte
+  document.getElementById('gain-rows').innerHTML = `
+    <div class="cr"><span class="cr-lbl">Gerettete Anfragen/Mon</span><span class="cr-val green">${fmtN(Math.round(c.verloreneAnfragen*0.8))}</span></div>
+    <div class="cr"><span class="cr-lbl">Geretteter Umsatz</span><span class="cr-val green">${fmtE(c.botUmsatzGewinn)}</span></div>
+    <div class="cr"><span class="cr-lbl">Personalkosten gespart</span><span class="cr-val green">${fmtE(c.botAnfrageEinsparung)}</span></div>
+    <div class="cr"><span class="cr-lbl">No-Shows reduziert um</span><span class="cr-val green">65 %</span></div>
+    <div class="cr"><span class="cr-lbl">Neue Bewertungen/Mon</span><span class="cr-val green">+${fmtN(c.fehlendeBewertungen)}</span></div>`;
+
+  // Rechenweg
+  document.getElementById('r-verlust-num').textContent  = fmtE(c.totalVerlust);
+  document.getElementById('r-einspar-num').textContent  = fmtE(c.totalBotGewinn);
+  document.getElementById('r-bew-num').textContent      = fmtE(c.botBewertungsUmsatz);
+  document.getElementById('r-gesamt-num').textContent   = fmtE(c.gesamtChance);
+
+  // Bewertungs-Erklärung – % statt gerechneter Kundenzahlen
+  const bewertRate = gv('sl-bewertung') / 100;
+  const mehrProzent = bewertRate < 0.38 ? Math.round((0.40 / bewertRate - 1) * 100) : 0;
+  const potenzialText = bewertRate >= 0.38
+    ? `Du sammelst bereits sehr aktiv Bewertungen – gut. Ein Bot hält das automatisch auf diesem Niveau, auch wenn du mal keine Zeit hast nachzufragen.`
+    : `Aktuell hinterlässt etwa jeder <strong>${Math.round(1/bewertRate)}. Kunde</strong> eine Bewertung. Mit einem Review-Bot könntest du das auf bis zu <strong>40 % deiner Kunden</strong> steigern – das wären <strong>rund ${mehrProzent} % mehr Bewertungen pro Monat</strong>.`;
+
+  document.getElementById('bewertungs-block').innerHTML = `
+    <div class="bew-title">⭐ Warum Bewertungen mehr bringen als nur Sterne</div>
+    <div class="bew-text">
+      ${potenzialText}
+      Natürlich zählen Sterne – aber Google bewertet drei Dinge: Gesamtbewertung, Anzahl der Bewertungen und wie <em>aktuell</em> sie sind. Wer wenig und selten bewertet wird, rutscht im lokalen Ranking nach hinten, egal wie gut die Noten sind.
+      88 % der Kunden vertrauen Online-Bewertungen genauso wie einer persönlichen Empfehlung. Bei zwei ähnlichen Anbietern gewinnt fast immer der mit den neueren Stimmen.
+    </div>`;
+}
+
+function renderBots(bots, c){
+  if(!bots||!bots.length) return;
+
+  // Vorqualifizierungs-Bot immer nach vorne sortieren
+  const sorted = [...bots].sort((a,b)=>{
+    if(a.name.toLowerCase().includes('vorqualifizier')) return -1;
+    if(b.name.toLowerCase().includes('vorqualifizier')) return 1;
+    return 0;
+  });
+
+  document.getElementById('bot-grid').innerHTML = sorted.map((b,i)=>{
+    const prioNum   = i === 0 ? '1' : i === 1 ? '2' : i === 2 ? '2' : '3';
+    const prioClass = i === 0 ? 'top' : i <= 2 ? 'mid' : 'solid';
+    return `
+    <div class="bot-card ${i===0?'top':''}">
+      <div class="bot-top-row">
+        <span class="bot-icon">${b.icon}</span>
+        <span class="bot-name">${b.name}</span>
+      </div>
+      <span class="bot-badge ${prioClass}">Prio ${prioNum}</span>
+      <div class="bot-desc">${b.desc}</div>
+      <div class="bot-saving">→ ${b.einsparung}</div>
+    </div>`;
+  }).join('');
+
+  // Keine Vorauswahl, alle Bots im Formular
+  botChecked = sorted.map(()=>false);
+  renderChecklist(sorted);
+}
+
+function resetCalc(){
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('lead-card').style.display = 'none';
+  document.getElementById('branche-input').value = '';
+  document.querySelectorAll('.tag').forEach(t=>t.classList.remove('active'));
+  aiData = null;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function submitLead(){
+  const email = document.getElementById('l-email').value.trim();
+  const name  = document.getElementById('l-name').value.trim();
+  const errEl = document.getElementById('lead-err');
+  if(!email || !email.includes('@')){
+    errEl.style.display='block'; return;
+  }
+  errEl.style.display='none';
+  const btn = document.getElementById('lead-btn');
+  btn.disabled=true; btn.textContent='Wird gesendet …';
+
+  const bots = aiData ? aiData.bots : [];
+  const selectedBots = bots.filter((_,i)=>botChecked[i]).map(b=>b.name).join(', ');
+
+  const payload = {
+    email, name,
+    branche: currentBranche,
+    tags: [`branche:${currentBranche.toLowerCase()}`, 'rechner-endkunde'],
+    source: CONFIG.lead_source,
+    gewaehlte_bots: selectedBots || 'keine Auswahl',
+    verlust_monatlich: Math.round(calcState.totalVerlust||0),
+    gesamtpotenzial:   Math.round(calcState.gesamtChance||0),
+    // UTM-Tracking
+    utm_source:   UTM.utm_source,
+    utm_medium:   UTM.utm_medium,
+    utm_campaign: UTM.utm_campaign,
+    utm_content:  UTM.utm_content,
+    utm_term:     UTM.utm_term,
+    referrer:     UTM.referrer
+  };
+
+  if(CONFIG.webhook_url){
+    fetch(CONFIG.webhook_url, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    })
+    .then(()=>{ showSuccess(); })
+    .catch(()=>{ showSuccess(); });
+  } else if(CONFIG.mailto_fallback){
+    // Fallback: E-Mail öffnen wenn kein Webhook konfiguriert
+    const subject = encodeURIComponent(`AI Bot Anfrage: ${currentBranche}`);
+    const body = encodeURIComponent(`Name: ${name||'–'}\nE-Mail: ${email}\nBranche: ${currentBranche}\nBots: ${selectedBots}\nVerlust/Mon: ${Math.round(calcState.totalVerlust||0)} €`);
+    window.location.href = `mailto:${CONFIG.mailto_fallback}?subject=${subject}&body=${body}`;
+    showSuccess();
+  } else {
+    showSuccess();
+  }
+}
+
+function showSuccess(){
+  document.getElementById('lead-form').style.display='none';
+  document.getElementById('success').style.display='block';
+}
+
+/* Init – CONFIG auf DOM anwenden */
+function applyConfig(){
+  document.getElementById('lead-headline').innerHTML  = CONFIG.lead_headline;
+  document.getElementById('lead-subtext').textContent = CONFIG.lead_subtext;
+  document.getElementById('lead-btn').textContent     = CONFIG.lead_cta;
+  document.getElementById('lead-note').textContent    = CONFIG.lead_datenschutz;
+  document.getElementById('success-title').textContent= CONFIG.success_title;
+  document.getElementById('success-sub').textContent  = CONFIG.success_text;
+  document.getElementById('footer-disc').innerHTML    =
+    `${CONFIG.footer_text}<br><strong>${CONFIG.firmenname}</strong> · ${CONFIG.website} · Honest numbers only.`;
+}
+
+applyConfig();
+updateCalc();
+renderChecklist();
+</script>
+</body>
+</html>

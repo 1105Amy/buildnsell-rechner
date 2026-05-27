@@ -14,6 +14,13 @@ exports.handler = async function(event) {
     'Content-Type': 'application/json',
   };
 
+  // Client IP serverseitig auslesen – für Meta CAPI
+  const clientIp =
+    event.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+    event.headers['x-nf-client-connection-ip'] ||
+    event.headers['client-ip'] ||
+    '';
+
   let branche;
   try {
     const body = JSON.parse(event.body);
@@ -73,6 +80,7 @@ Genau 4 Use Cases. Fokus auf: Terminbuchung, Missed Call Text Back, FAQ-Automati
     if (!match) throw new Error('Kein JSON in Antwort');
 
     const parsed = JSON.parse(match[0]);
+    parsed.clientIp = clientIp;
     return { statusCode: 200, headers, body: JSON.stringify(parsed) };
 
   } catch(e) {

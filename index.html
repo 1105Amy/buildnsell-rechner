@@ -17,8 +17,8 @@
   --steel:  #a0b4c8;
   --yellow: #f5f000;
   --white:  #ffffff;
-  --sub:    #f3f5f7;
-  --muted:  #d8e0e9;
+  --sub:    #d0d8e0;
+  --muted:  #a0b4c8;
   --good:   #4ade80;
   --r:      8px;
 }
@@ -195,6 +195,15 @@ input[type=range]::-moz-range-thumb{width:3px;height:20px;background:var(--yello
 .lead-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:480px;margin:0 auto 14px;text-align:left;}
 @media(max-width:500px){.lead-fields{grid-template-columns:1fr;}}
 .lf label{display:block;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);margin-bottom:7px;}
+.ghl-question{margin:18px 0 0;padding-top:16px;border-top:1px solid rgba(255,255,255,.07);}
+.ghl-question .q-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.toggle-row{display:flex;gap:6px;}
+.toggle-btn{padding:6px 20px;border-radius:4px;border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;}
+.toggle-btn.active{border-color:rgba(232,25,75,.5);color:var(--white);}
+.tarif-row{display:flex;gap:6px;margin-top:8px;}
+.tarif-btn{padding:5px 14px;border-radius:4px;border:1px solid rgba(255,255,255,.08);background:transparent;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;}
+.tarif-btn.active{border-color:rgba(232,25,75,.4);color:var(--sub);}
+#tarif-section{display:none;margin-top:8px;}
 .lf input{
   width:100%;background:var(--card2);border:1px solid var(--line);border-radius:var(--r);
   outline:none;color:var(--white);font-family:'Barlow',sans-serif;font-size:16px;font-weight:500;
@@ -221,6 +230,23 @@ input[type=range]::-moz-range-thumb{width:3px;height:20px;background:var(--yello
 
 .disc{margin-top:36px;font-size:13px;color:var(--muted);text-align:center;line-height:1.8;}
 </style>
+  <!-- Meta Pixel – wird nur nach Cookie-Zustimmung geladen -->
+  <script>
+  function loadPixel(){
+    if(window._pixelLoaded) return;
+    window._pixelLoaded = true;
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1223697135309984');
+    fbq('track', 'PageView');
+  }
+  // Bereits zugestimmt? Pixel sofort laden
+  if(localStorage.getItem('cookie_consent') === 'accepted'){ loadPixel(); }
+  </script>
+  <!-- Ende Meta Pixel -->
 </head>
 <body>
 <div class="wrap">
@@ -324,8 +350,8 @@ input[type=range]::-moz-range-thumb{width:3px;height:20px;background:var(--yello
         <div class="lf"><label>E-Mail *</label><input type="email" id="l-email" placeholder="deine@email.de" autocomplete="email"></div>
       </div>
       <div class="err" id="lead-err"></div>
-      <button class="btn" id="lead-btn" onclick="submitLead()">Auswertung + Plan senden →</button>
-      <p class="note">Mit dem Absenden abonnierst du meinen wöchentlichen Newsletter rund um AI Bots und Automatisierung. Abmeldung jederzeit möglich. Weitere Infos in meiner <a href="https://henriettegladiator.de/datenschutz" target="_blank">Datenschutzerklärung</a>.</p>
+      <button class="btn" id="lead-btn" onclick="submitLead()" style="margin-top:20px;">Auswertung + Plan senden →</button>
+      <p class="note">Mit dem Absenden erhältst du gelegentlich Infos rund um AI Bots und Automatisierung von BuildNSell. Abmeldung jederzeit möglich.</p>
     </div>
     <div id="success">
       <div class="success-icon">✅</div>
@@ -336,7 +362,7 @@ input[type=range]::-moz-range-thumb{width:3px;height:20px;background:var(--yello
 
   <div class="disc">
     Berechnungen basieren auf realistischen DACH-Marktdaten. Individuelle Ergebnisse variieren.<br>
-    <strong>BuildNSell</strong> · henriettegladiator.de
+    <strong>BuildNSell</strong> · henriettegladiator.de · Honest numbers only.
   </div>
 
 </div>
@@ -344,17 +370,6 @@ input[type=range]::-moz-range-thumb{width:3px;height:20px;background:var(--yello
 <script>
 const GHL_WEBHOOK = 'https://services.leadconnectorhq.com/hooks/HnZ7fqRJhjMDvip73Spa/webhook-trigger/4b825528-c82a-42a3-bf07-82a7b58fee0f';
 
-function getUTM() {
-  const p = new URLSearchParams(window.location.search);
-  return {
-    utmSource:   p.get('utm_source')   || '',
-    utmMedium:   p.get('utm_medium')   || '',
-    utmCampaign: p.get('utm_campaign') || '',
-    utmContent:  p.get('utm_content')  || '',
-    utmTerm:     p.get('utm_term')     || '',
-  };
-}
-  
 let aiData = null;
 let currentBranche = '';
 let calcResult = {};
@@ -527,6 +542,15 @@ function resetCalc(){
 }
 
 /* ── LEAD / WEBHOOK ── */
+function getCookie(name){
+  const v = document.cookie.split(';').map(c=>c.trim()).find(c=>c.startsWith(name+'='));
+  return v ? decodeURIComponent(v.split('=')[1]) : '';
+}
+
+function getFbclid(){
+  return new URLSearchParams(window.location.search).get('fbclid') || '';
+}
+
 async function submitLead(){
   const fname = document.getElementById('l-name').value.trim();
   const email = document.getElementById('l-email').value.trim();
@@ -591,8 +615,14 @@ async function submitLead(){
     recurringEnde:      calcResult.lastMRR || 0,
     gesamtPotenzial:    calcResult.gesamt || 0,
 
-    // UTM Tracking
-    ...getUTM(),
+    // Meta CAPI Matching
+    fbclid:             getFbclid(),
+    fbp:                getCookie('_fbp'),
+    fbc:                getCookie('_fbc') || (getFbclid() ? 'fb.1.' + Date.now() + '.' + getFbclid() : ''),
+    landingPageUrl:     window.location.href,
+    eventSourceUrl:     window.location.href,
+    userAgent:          navigator.userAgent,
+    clientIp:           aiData?.clientIp || '',
   };
 
   try{
@@ -603,6 +633,14 @@ async function submitLead(){
     });
   } catch(e){ console.warn('Webhook error:',e); }
 
+  // Meta Pixel – Lead Event nach erfolgreichem Absenden
+  if(typeof fbq !== 'undefined'){
+    fbq('track', 'Lead', {
+      content_name:     'BuildNSell Rechner',
+      content_category: aiData?.brancheNormiert || currentBranche || 'Unbekannt',
+    });
+  }
+
   document.getElementById('lead-form').style.display = 'none';
   document.getElementById('success').style.display   = 'block';
 }
@@ -611,5 +649,54 @@ document.getElementById('l-email')?.addEventListener('keydown',e=>{
   if(e.key==='Enter') submitLead();
 });
 </script>
+
+<!-- Cookie Banner -->
+<style>
+#cookie-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:9999;
+  background:#111318;border-top:1px solid rgba(255,255,255,.1);
+  padding:14px 24px;display:flex;align-items:center;justify-content:space-between;
+  gap:16px;flex-wrap:wrap;
+  font-family:'Barlow',sans-serif;font-size:14px;color:#d0d8e0;
+  box-shadow:0 -4px 24px rgba(0,0,0,.4);
+}
+#cookie-bar a{color:#a0b4c8;text-decoration:underline;white-space:nowrap;}
+#cookie-bar a:hover{color:#d0d8e0;}
+.cookie-btns{display:flex;gap:8px;flex-shrink:0;}
+.cookie-btn{padding:7px 18px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;}
+.cookie-accept{background:#e8194b;color:#fff;}
+.cookie-accept:hover{background:#c41540;}
+.cookie-decline{background:transparent;color:#a0b4c8;border:1px solid rgba(255,255,255,.15);}
+.cookie-decline:hover{color:#d0d8e0;border-color:rgba(255,255,255,.3);}
+</style>
+
+<div id="cookie-bar" style="display:none;">
+  <span>
+    Diese Seite nutzt den Meta Pixel um die Wirksamkeit von Werbeanzeigen zu messen.
+    Mehr dazu in unserer <a href="https://henriettegladiator.de/datenschutz" target="_blank">Datenschutzerklärung</a>.
+  </span>
+  <div class="cookie-btns">
+    <button class="cookie-btn cookie-decline" onclick="cookieDecline()">Ablehnen</button>
+    <button class="cookie-btn cookie-accept" onclick="cookieAccept()">Akzeptieren</button>
+  </div>
+</div>
+
+<script>
+function cookieAccept(){
+  localStorage.setItem('cookie_consent','accepted');
+  document.getElementById('cookie-bar').style.display='none';
+  loadPixel();
+}
+function cookieDecline(){
+  localStorage.setItem('cookie_consent','declined');
+  document.getElementById('cookie-bar').style.display='none';
+}
+// Banner nur zeigen wenn noch keine Entscheidung
+if(!localStorage.getItem('cookie_consent')){
+  document.getElementById('cookie-bar').style.display='flex';
+}
+</script>
+<!-- Ende Cookie Banner -->
+
 </body>
 </html>
